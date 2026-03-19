@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Northlink Training</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-page="training">
+    <div class="site-shell inner-page">
+      <header class="topbar">
+        <a class="brand" href="index.html"><span class="brand-mark">N</span><span><strong>Northlink</strong><small data-field="siteTagline">ATC Training & Virtual Airline</small></span></a>
+        <nav class="nav">
+          <a href="index.html" data-nav="home">Home</a>
+          <a href="training.html" data-nav="training">Training</a>
+          <a href="fleet.html" data-nav="fleet">Fleet</a>
+          <a href="crew.html" data-nav="crew">Crew Center</a>
+          <a href="admin.html" class="portal-link" data-nav="admin">Admin Portal</a>
+        </nav>
+      </header>
+      <main class="page-grid reveal">
+        <section class="page-hero glass">
+          <p class="section-tag">ATC Academy</p>
+          <h1>Controller Training Pipeline</h1>
+          <p data-field="academyIntro">Progress through a five-stage academy with mentor pairing, live session debriefs, SOP drills, and event certifications.</p>
+        </section>
+
+        <section class="training-layout">
+          <div class="card-list">
+            <article class="card glass"><h3>Stage 1 · Fundamentals</h3><p>Phraseology, strip marking, radar etiquette, and sector awareness.</p></article>
+            <article class="card glass"><h3>Stage 2 · Tower</h3><p>Ground flow, runway coordination, VFR handling, and departure sequencing.</p></article>
+            <article class="card glass"><h3>Stage 3 · Approach</h3><p>STARs, vectoring, transition planning, missed approach handling, and workload management.</p></article>
+            <article class="card glass"><h3>Stage 4 · Center</h3><p>Enroute conflicts, oceanic procedures, event staffing, and sector handoffs.</p></article>
+            <article class="card glass"><h3>Stage 5 · Instructor</h3><p>Check rides, grading, team leadership, and academy development.</p></article>
+          </div>
+
+          <section class="training-form-panel glass">
+            <div class="form-heading">
+              <p class="section-tag">Need Training?</p>
+              <h2>Send a request to the admin portal</h2>
+              <p>Fill this out and the request will appear in the admin inbox for review.</p>
+            </div>
+            <form id="trainingRequestForm" class="request-form">
+              <label><span>Name / Callsign</span><input name="name" type="text" required placeholder="NTL204 / Alex" /></label>
+              <label><span>Email or Discord</span><input name="contact" type="text" required placeholder="alex#2040" /></label>
+              <label><span>Requested position</span>
+                <select name="position" required>
+                  <option value="">Choose a position</option>
+                  <option>Ground / Delivery</option>
+                  <option>Tower</option>
+                  <option>Approach</option>
+                  <option>Center</option>
+                  <option>Instructor Track</option>
+                </select>
+              </label>
+              <label><span>Availability</span><input name="availability" type="text" required placeholder="Weekends 18:00Z-22:00Z" /></label>
+              <label class="full"><span>Experience</span><textarea name="experience" rows="3" placeholder="Tell us about your experience level"></textarea></label>
+              <label class="full"><span>Goals</span><textarea name="goals" rows="4" required placeholder="What do you want to train on?"></textarea></label>
+              <div class="form-actions">
+                <button type="submit" class="button button-primary">Send Training Request</button>
+                <p id="trainingFormStatus" class="form-status">No request submitted yet.</p>
+              </div>
+            </form>
+          </section>
+        </section>
+      </main>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>
