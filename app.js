@@ -1,11 +1,33 @@
 const DEFAULT_SETTINGS = {
   siteName: 'Northlink',
+  siteTagline: 'ATC Training & Virtual Airline',
   logoLetter: 'N',
+  accentColor: '#73c7ff',
+  titleColor: '#ffffff',
   heroEyebrow: 'Atlantic precision. Northern discipline.',
   heroTitle: 'NORTHLINK',
   heroSubtitle: 'ATC TRAINING + VIRTUAL AIRLINE OPERATIONS',
   heroCopy: 'Build real procedures, fly organized schedules, and train with a virtual team that treats every session like the real thing.',
+  primaryCtaLabel: 'Join Crew Center',
+  secondaryCtaLabel: 'Request Training',
+  briefTitle: 'North Atlantic Training Block',
+  briefText: 'Mentor-guided tower and approach rotations with post-session review packs and progression tracking.',
   heroImage: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1600&q=80',
+  trainingTitle: 'Train from delivery to center',
+  trainingText: 'Northlink mentors new and advanced controllers with live briefing nights, SOP packs, and guided session reviews.',
+  vaTitle: 'Fly a modern northern network',
+  vaText: 'From shuttle hops to transatlantic runs, our crew center keeps your routes, bids, and progression all in one place.',
+  communityTitle: 'Built for squads, events, and growth',
+  communityText: 'Host group flights, training nights, and flagship events with a style inspired by premium military and airline presentation sites.',
+  whyTitle: 'A polished operations hub for serious sim pilots and controllers',
+  whyText: 'Every page is built to feel cinematic and mission-ready, while still giving your team a clear way to manage information, fleets, imagery, and branding from the admin portal.',
+  academyIntro: 'Progress through a five-stage academy with mentor pairing, live session debriefs, SOP drills, and event certifications.',
+  statOneNumber: '24/7',
+  statOneLabel: 'Operations board and dispatch planning',
+  statTwoNumber: '5 Stages',
+  statTwoLabel: 'Structured ATC training pipeline',
+  statThreeNumber: '18 Aircraft',
+  statThreeLabel: 'VA fleet with regional and long-haul routes',
   fleetHeading: 'Northlink Operational Fleet',
   fleetIntro: 'Flexible fleet planning for regional training hops, cargo lines, and long-haul flagship operations.',
   fleetItems: [
@@ -16,37 +38,65 @@ const DEFAULT_SETTINGS = {
   ]
 };
 
-const STORAGE_KEY = 'northlink-admin-settings';
+const SETTINGS_KEY = 'northlink-admin-settings';
+const REQUESTS_KEY = 'northlink-training-requests';
 const settings = loadSettings();
+const requests = loadRequests();
+
 applySettings(settings);
 setActiveNav();
 renderFleet();
 setupRevealAnimations();
+setupTrainingForm();
 setupAdmin();
+renderRequests();
 
 function loadSettings() {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) return { ...DEFAULT_SETTINGS };
+  const raw = localStorage.getItem(SETTINGS_KEY);
+  if (!raw) return structuredClone(DEFAULT_SETTINGS);
   try {
-    const parsed = JSON.parse(raw);
-    return { ...DEFAULT_SETTINGS, ...parsed };
+    return { ...structuredClone(DEFAULT_SETTINGS), ...JSON.parse(raw) };
   } catch {
-    return { ...DEFAULT_SETTINGS };
+    return structuredClone(DEFAULT_SETTINGS);
+  }
+}
+
+function loadRequests() {
+  const raw = localStorage.getItem(REQUESTS_KEY);
+  if (!raw) return [];
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return [];
   }
 }
 
 function saveSettings(next) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(next));
+}
+
+function saveRequests(next) {
+  localStorage.setItem(REQUESTS_KEY, JSON.stringify(next));
 }
 
 function applySettings(current) {
   document.documentElement.style.setProperty('--hero-image', `url('${current.heroImage}')`);
+  document.documentElement.style.setProperty('--accent', current.accentColor || DEFAULT_SETTINGS.accentColor);
+  document.documentElement.style.setProperty('--title-color', current.titleColor || DEFAULT_SETTINGS.titleColor);
+
   document.querySelectorAll('[data-field]').forEach((node) => {
     const key = node.dataset.field;
-    if (current[key]) node.textContent = current[key];
+    if (Object.hasOwn(current, key)) {
+      node.textContent = current[key];
+    }
   });
-  document.querySelectorAll('.brand strong').forEach((node) => (node.textContent = current.siteName));
-  document.querySelectorAll('.brand-mark').forEach((node) => (node.textContent = current.logoLetter || 'N'));
+
+  document.querySelectorAll('.brand strong').forEach((node) => {
+    node.textContent = current.siteName;
+  });
+  document.querySelectorAll('.brand-mark').forEach((node) => {
+    node.textContent = current.logoLetter || 'N';
+  });
 }
 
 function setActiveNav() {
@@ -57,10 +107,11 @@ function setActiveNav() {
 function renderFleet() {
   const container = document.getElementById('fleetGrid');
   if (!container) return;
+
   container.innerHTML = settings.fleetItems
     .map(
       (item) => `
-        <article class="card glass fleet-card">
+        <article class="card glass fleet-card reveal visible">
           <img src="${item.image}" alt="${item.name}" />
           <span>${item.role}</span>
           <h3>${item.name}</h3>
@@ -69,7 +120,41 @@ function renderFleet() {
     .join('');
 }
 
+function renderRequests() {
+  const list = document.getElementById('requestList');
+  if (!list) return;
+
+  if (!requests.length) {
+    list.innerHTML = '<div class="empty-state">No training requests have been submitted yet.</div>';
+    return;
+  }
+
+  list.innerHTML = [...requests]
+    .reverse()
+    .map(
+      (request) => `
+        <article class="request-card">
+          <h3>${request.name}</h3>
+          <div class="request-meta">
+            <span>${request.position}</span>
+            <span>${request.contact}</span>
+            <span>${request.availability}</span>
+            <span>${request.submittedAt}</span>
+          </div>
+          <p><strong>Experience:</strong> ${request.experience || 'Not provided'}</p>
+          <p><strong>Goals:</strong> ${request.goals}</p>
+        </article>`
+    )
+    .join('');
+}
+
 function setupRevealAnimations() {
+  const animated = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window)) {
+    animated.forEach((item) => item.classList.add('visible'));
+    return;
+  }
+
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
@@ -78,28 +163,51 @@ function setupRevealAnimations() {
     },
     { threshold: 0.15 }
   );
-  document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+
+  animated.forEach((item) => observer.observe(item));
+}
+
+function setupTrainingForm() {
+  const form = document.getElementById('trainingRequestForm');
+  const status = document.getElementById('trainingFormStatus');
+  if (!form || !status) return;
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const formData = new FormData(form);
+    const submission = {
+      name: String(formData.get('name') || '').trim(),
+      contact: String(formData.get('contact') || '').trim(),
+      position: String(formData.get('position') || '').trim(),
+      availability: String(formData.get('availability') || '').trim(),
+      experience: String(formData.get('experience') || '').trim(),
+      goals: String(formData.get('goals') || '').trim(),
+      submittedAt: new Date().toLocaleString()
+    };
+
+    requests.push(submission);
+    saveRequests(requests);
+    renderRequests();
+    form.reset();
+    status.textContent = 'Training request sent to the admin portal inbox.';
+  });
 }
 
 function setupAdmin() {
   const panel = document.getElementById('adminPanel');
+  const inbox = document.getElementById('requestInbox');
   const unlockButton = document.getElementById('adminUnlock');
   const status = document.getElementById('adminStatus');
-  if (!panel || !unlockButton || !status) return;
+  if (!panel || !unlockButton || !status || !inbox) return;
 
-  const serializedFleet = () =>
-    settings.fleetItems.map((item) => `${item.name}|${item.role}|${item.image}`).join('\n');
-
-  document.querySelectorAll('[data-setting]').forEach((input) => {
-    const key = input.dataset.setting;
-    input.value = key === 'fleetItems' ? serializedFleet() : settings[key] || '';
-  });
+  populateAdminForm();
 
   unlockButton.addEventListener('click', () => {
     const password = window.prompt('Enter admin password');
     if (password === 'Popwings') {
       panel.classList.remove('locked');
-      status.textContent = 'Editor unlocked. You can now change logos, text, pictures, and fleet.';
+      inbox.classList.remove('locked');
+      status.textContent = 'Editor unlocked. You can now change branding, text, colors, pictures, fleet, and review training requests.';
     } else {
       status.textContent = 'Incorrect password. Editor remains locked.';
     }
@@ -107,6 +215,7 @@ function setupAdmin() {
 
   document.getElementById('saveSettings')?.addEventListener('click', () => {
     const next = { ...settings };
+
     document.querySelectorAll('[data-setting]').forEach((input) => {
       const key = input.dataset.setting;
       if (key === 'fleetItems') {
@@ -116,28 +225,46 @@ function setupAdmin() {
           .filter(Boolean)
           .map((line) => {
             const [name, role, image] = line.split('|');
-            return { name: name?.trim() || 'Aircraft', role: role?.trim() || 'Role', image: image?.trim() || DEFAULT_SETTINGS.fleetItems[0].image };
+            return {
+              name: name?.trim() || 'Aircraft',
+              role: role?.trim() || 'Role',
+              image: image?.trim() || DEFAULT_SETTINGS.fleetItems[0].image
+            };
           });
       } else {
         next[key] = input.value.trim();
       }
     });
+
     Object.assign(settings, next);
     saveSettings(next);
-    applySettings(next);
+    applySettings(settings);
     renderFleet();
     status.textContent = 'Changes saved locally in this browser.';
   });
 
   document.getElementById('resetSettings')?.addEventListener('click', () => {
-    localStorage.removeItem(STORAGE_KEY);
-    Object.assign(settings, JSON.parse(JSON.stringify(DEFAULT_SETTINGS)));
-    document.querySelectorAll('[data-setting]').forEach((input) => {
-      const key = input.dataset.setting;
-      input.value = key === 'fleetItems' ? serializedFleet() : settings[key] || '';
-    });
+    localStorage.removeItem(SETTINGS_KEY);
+    Object.assign(settings, structuredClone(DEFAULT_SETTINGS));
+    populateAdminForm();
     applySettings(settings);
     renderFleet();
     status.textContent = 'Defaults restored.';
+  });
+
+  document.getElementById('clearRequests')?.addEventListener('click', () => {
+    requests.splice(0, requests.length);
+    saveRequests(requests);
+    renderRequests();
+    status.textContent = 'Training request inbox cleared.';
+  });
+}
+
+function populateAdminForm() {
+  document.querySelectorAll('[data-setting]').forEach((input) => {
+    const key = input.dataset.setting;
+    input.value = key === 'fleetItems'
+      ? settings.fleetItems.map((item) => `${item.name}|${item.role}|${item.image}`).join('\n')
+      : settings[key] || '';
   });
 }
