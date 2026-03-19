@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Northlink Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-page="admin">
+    <div class="site-shell inner-page">
+      <header class="topbar">
+        <a class="brand" href="index.html"><span class="brand-mark">N</span><span><strong>Northlink</strong><small>ATC Training & Virtual Airline</small></span></a>
+        <nav class="nav">
+          <a href="index.html" data-nav="home">Home</a>
+          <a href="training.html" data-nav="training">Training</a>
+          <a href="fleet.html" data-nav="fleet">Fleet</a>
+          <a href="crew.html" data-nav="crew">Crew Center</a>
+          <a href="admin.html" class="portal-link" data-nav="admin">Admin Portal</a>
+        </nav>
+      </header>
+      <main class="page-grid reveal">
+        <section class="page-hero glass">
+          <p class="section-tag">Admin Portal</p>
+          <h1>Site Control Center</h1>
+          <p>Use the access button below and password <strong>Popwings</strong> to unlock editing. Changes save in your browser via local storage.</p>
+          <button id="adminUnlock" class="button button-primary">Unlock Admin Editor</button>
+          <p id="adminStatus" class="admin-status">Editor locked.</p>
+        </section>
+
+        <section id="adminPanel" class="admin-panel glass locked">
+          <div class="admin-grid">
+            <label>
+              <span>Site name</span>
+              <input data-setting="siteName" type="text" placeholder="Northlink" />
+            </label>
+            <label>
+              <span>Logo letter</span>
+              <input data-setting="logoLetter" type="text" maxlength="2" placeholder="N" />
+            </label>
+            <label>
+              <span>Hero eyebrow</span>
+              <input data-setting="heroEyebrow" type="text" />
+            </label>
+            <label>
+              <span>Hero title</span>
+              <input data-setting="heroTitle" type="text" />
+            </label>
+            <label>
+              <span>Hero subtitle</span>
+              <input data-setting="heroSubtitle" type="text" />
+            </label>
+            <label class="full">
+              <span>Hero paragraph</span>
+              <textarea data-setting="heroCopy" rows="3"></textarea>
+            </label>
+            <label class="full">
+              <span>Background image URL</span>
+              <input data-setting="heroImage" type="url" placeholder="https://..." />
+            </label>
+            <label class="full">
+              <span>Fleet items (format: aircraft|role|image URL; one per line)</span>
+              <textarea data-setting="fleetItems" rows="7"></textarea>
+            </label>
+          </div>
+          <div class="admin-actions">
+            <button id="saveSettings" class="button button-primary">Save Changes</button>
+            <button id="resetSettings" class="button button-secondary">Reset Defaults</button>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>
