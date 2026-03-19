@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Northlink Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-page="admin" class="admin-page locked-admin-page">
+    <div class="site-shell inner-page">
+      <header class="topbar">
+        <a class="brand" href="index.html"><span class="brand-mark">N</span><span><strong>Northlink</strong><small data-field="siteTagline">ATC Training & Virtual Airline</small></span></a>
+        <nav class="nav">
+          <a href="index.html" data-nav="home">Home</a>
+          <a href="training.html" data-nav="training">Training</a>
+          <a href="fleet.html" data-nav="fleet">Fleet</a>
+          <a href="crew.html" data-nav="crew">Crew Center</a>
+          <a href="admin.html" class="portal-link" data-nav="admin">Admin Portal</a>
+        </nav>
+      </header>
+
+      <main class="page-grid reveal">
+        <section id="adminGate" class="admin-gate glass">
+          <p class="section-tag">Restricted</p>
+          <h1>Admin Portal</h1>
+          <p>This portal is hidden until the correct password is entered.</p>
+          <form id="adminLoginForm" class="single-column-form compact-form">
+            <label><span>Admin password</span><input id="adminPasswordInput" type="password" placeholder="Enter password" required /></label>
+            <button class="button button-primary" type="submit">Enter Portal</button>
+            <p id="adminGateStatus" class="form-status">Portal locked.</p>
+          </form>
+        </section>
+
+        <div id="adminWorkspace" class="hidden-panel admin-workspace">
+          <section class="page-hero glass clean-hero">
+            <div>
+              <p class="section-tag">Admin Portal</p>
+              <h1>Site Control Center</h1>
+              <p>Edit site content, generate crew login codes, and review incoming training requests.</p>
+            </div>
+            <div class="hero-chip-stack">
+              <div class="request-count-pill">Requests <strong id="requestCountBadge">0</strong></div>
+              <div class="request-count-pill">Crew Codes <strong id="crewCodeCountAdmin">0</strong></div>
+              <button id="adminLogout" class="button button-secondary" type="button">Lock Portal</button>
+            </div>
+          </section>
+
+          <section class="admin-surface-grid">
+            <section class="glass inbox-panel">
+              <div class="admin-section-header">
+                <div>
+                  <h2>Training request inbox</h2>
+                  <p>Requests submitted from the training page appear here automatically.</p>
+                </div>
+                <div class="request-count-pill">Live queue <strong id="requestCountHeader">0</strong></div>
+              </div>
+              <div id="requestList" class="request-list"></div>
+              <div class="admin-actions">
+                <button id="clearRequests" class="button button-secondary">Clear Request Inbox</button>
+              </div>
+            </section>
+
+            <section class="glass admin-panel">
+              <div class="admin-section-header">
+                <h2>Crew center login generator</h2>
+                <p>Create reusable crew access codes until real APIs are added.</p>
+              </div>
+              <form id="crewCodeForm" class="admin-grid compact-grid">
+                <label><span>Label / role</span><input name="crew_label" type="text" placeholder="Dispatcher / Instructor" required /></label>
+                <label><span>Code prefix</span><input name="crew_prefix" type="text" maxlength="8" placeholder="NTL" required /></label>
+                <div class="admin-actions full"><button type="submit" class="button button-primary">Generate Crew Login</button></div>
+              </form>
+              <div id="crewCodeList" class="request-list code-list"></div>
+            </section>
+          </section>
+
+          <section class="glass admin-panel">
+            <div class="admin-section-header">
+              <h2>Content & branding editor</h2>
+              <p>Changes save in this browser and instantly update the public pages.</p>
+            </div>
+            <div class="admin-grid">
+              <label><span>Site name</span><input data-setting="siteName" type="text" placeholder="Northlink" /></label>
+              <label><span>Logo letters</span><input data-setting="logoLetter" type="text" maxlength="3" placeholder="N" /></label>
+              <label class="full"><span>Tagline</span><input data-setting="siteTagline" type="text" /></label>
+              <label><span>Accent color</span><input data-setting="accentColor" type="color" /></label>
+              <label><span>Hero title color</span><input data-setting="titleColor" type="color" /></label>
+              <label><span>Hero eyebrow</span><input data-setting="heroEyebrow" type="text" /></label>
+              <label><span>Hero title</span><input data-setting="heroTitle" type="text" /></label>
+              <label class="full"><span>Hero subtitle</span><input data-setting="heroSubtitle" type="text" /></label>
+              <label class="full"><span>Hero paragraph</span><textarea data-setting="heroCopy" rows="3"></textarea></label>
+              <label><span>Primary CTA label</span><input data-setting="primaryCtaLabel" type="text" /></label>
+              <label><span>Secondary CTA label</span><input data-setting="secondaryCtaLabel" type="text" /></label>
+              <label><span>Brief card title</span><input data-setting="briefTitle" type="text" /></label>
+              <label><span>Brief card text</span><input data-setting="briefText" type="text" /></label>
+              <label><span>Homepage highlight title</span><input data-setting="whyTitle" type="text" /></label>
+              <label class="full"><span>Homepage highlight text</span><textarea data-setting="whyText" rows="3"></textarea></label>
+              <label class="full"><span>Training intro</span><textarea data-setting="academyIntro" rows="3"></textarea></label>
+              <label class="full"><span>Fleet heading</span><input data-setting="fleetHeading" type="text" /></label>
+              <label class="full"><span>Fleet intro</span><textarea data-setting="fleetIntro" rows="3"></textarea></label>
+              <label class="full"><span>Background image URL</span><input data-setting="heroImage" type="url" placeholder="https://..." /></label>
+              <label class="full"><span>Fleet items (format: aircraft|role|image URL; one per line)</span><textarea data-setting="fleetItems" rows="8"></textarea></label>
+            </div>
+            <div class="admin-actions">
+              <button id="saveSettings" class="button button-primary">Save Changes</button>
+              <button id="resetSettings" class="button button-secondary">Reset Defaults</button>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>
