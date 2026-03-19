@@ -6,8 +6,8 @@ Static multi-page website for **Northlink**, an ATC training and virtual airline
 - `index.html` - cinematic landing page
 - `training.html` - ATC academy overview plus training request form
 - `fleet.html` - editable fleet showcase
-- `crew.html` - crew center dashboard
-- `admin.html` - browser-based admin editor and training inbox
+- `crew.html` - crew center login and dashboard
+- `admin.html` - locked admin portal, training inbox, and crew login generator
 
 ## Admin access
 Open `admin.html` and use password `Popwings` to unlock editing.
@@ -20,6 +20,7 @@ Open `admin.html` and use password `Popwings` to unlock editing.
 - hero background image
 - full fleet list using `aircraft|role|image URL`
 - submitted training requests from the training page
+- crew center access codes generated in the admin portal
 
 ## Run locally
 ```bash

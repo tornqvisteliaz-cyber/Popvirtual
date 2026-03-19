@@ -22,22 +22,46 @@
         </nav>
       </header>
       <main class="page-grid reveal">
-        <section class="page-hero glass">
-          <p class="section-tag">Crew Center</p>
-          <h1>Operations Dashboard</h1>
-          <p>Track your next flight, assigned training stage, event signups, and currency status from one screen.</p>
+        <section class="page-hero glass clean-hero">
+          <div>
+            <p class="section-tag">Crew Center</p>
+            <h1>Operations Dashboard</h1>
+            <p>Use a crew access code generated in the admin portal to unlock the internal dashboard.</p>
+          </div>
+          <div class="hero-chip-stack">
+            <div class="hero-chip"><strong id="crewCodeCount">0</strong><span>Active access codes</span></div>
+          </div>
         </section>
-        <section class="crew-layout">
-          <article class="card glass metric-card"><span>Next Assignment</span><strong>ENBR → EGPH</strong><small>B738 / Gate 4 / 18:30Z</small></article>
-          <article class="card glass metric-card"><span>ATC Stage</span><strong>S3 · Approach</strong><small>Check ride ready in 2 sessions</small></article>
-          <article class="card glass metric-card"><span>Hours Logged</span><strong>147.2</strong><small>12.4 this month</small></article>
-          <article class="card glass metric-card"><span>Rank</span><strong>Senior First Officer</strong><small>Promotion board open</small></article>
-        </section>
-        <section class="crew-table glass">
-          <div class="table-header"><h3>Upcoming roster</h3><button class="button button-secondary">Sync Briefing</button></div>
-          <div class="table-row"><span>Monday</span><strong>Group Flight: Reykjavik Shuttle</strong><small>20:00Z · 14 crew registered</small></div>
-          <div class="table-row"><span>Wednesday</span><strong>Academy Night: Tower Workshop</strong><small>19:30Z · Instructor NTL204</small></div>
-          <div class="table-row"><span>Saturday</span><strong>Flagship Event: North Atlantic Surge</strong><small>21:00Z · Full staffing requested</small></div>
+
+        <section class="crew-auth-shell">
+          <section class="glass crew-login-panel">
+            <div class="admin-section-header">
+              <h2>Crew login</h2>
+              <p>Enter the access code created in the admin portal login generator.</p>
+            </div>
+            <form id="crewLoginForm" class="request-form single-column-form">
+              <label><span>Access code</span><input id="crewAccessCode" name="access_code" type="text" required placeholder="NTL-CREW-4821" /></label>
+              <div class="form-actions">
+                <button type="submit" class="button button-primary">Unlock Crew Center</button>
+              </div>
+              <p id="crewLoginStatus" class="form-status">No crew session active.</p>
+            </form>
+          </section>
+
+          <section id="crewDashboard" class="crew-dashboard locked-view hidden-panel">
+            <section class="crew-layout">
+              <article class="card glass metric-card"><span>Next Assignment</span><strong>ENBR → EGPH</strong><small>B738 / Gate 4 / 18:30Z</small></article>
+              <article class="card glass metric-card"><span>ATC Stage</span><strong>S3 · Approach</strong><small>Check ride ready in 2 sessions</small></article>
+              <article class="card glass metric-card"><span>Hours Logged</span><strong>147.2</strong><small>12.4 this month</small></article>
+              <article class="card glass metric-card"><span>Rank</span><strong>Senior First Officer</strong><small>Promotion board open</small></article>
+            </section>
+            <section class="crew-table glass">
+              <div class="table-header"><h3>Upcoming roster</h3><button id="crewLogout" class="button button-secondary" type="button">Log Out</button></div>
+              <div class="table-row"><span>Monday</span><strong>Group Flight: Reykjavik Shuttle</strong><small>20:00Z · 14 crew registered</small></div>
+              <div class="table-row"><span>Wednesday</span><strong>Academy Night: Tower Workshop</strong><small>19:30Z · Instructor NTL204</small></div>
+              <div class="table-row"><span>Saturday</span><strong>Flagship Event: North Atlantic Surge</strong><small>21:00Z · Full staffing requested</small></div>
+            </section>
+          </section>
         </section>
       </main>
     </div>

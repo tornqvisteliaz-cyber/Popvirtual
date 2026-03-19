@@ -40,8 +40,13 @@ const DEFAULT_SETTINGS = {
 
 const SETTINGS_KEY = 'northlink-admin-settings';
 const REQUESTS_KEY = 'northlink-training-requests';
+const CREW_CODES_KEY = 'northlink-crew-codes';
+const CREW_SESSION_KEY = 'northlink-crew-session';
+const ADMIN_SESSION_KEY = 'northlink-admin-session';
+
 const settings = loadSettings();
 let requests = loadRequests();
+let crewCodes = loadCrewCodes();
 
 applySettings(settings);
 setActiveNav();
@@ -49,8 +54,11 @@ renderFleet();
 setupRevealAnimations();
 setupTrainingForm();
 setupAdmin();
+setupCrewCenter();
 renderRequests();
+renderCrewCodes();
 updateRequestCounters();
+updateCrewCodeCounters();
 setupStorageSync();
 
 function cloneDefaults() {
@@ -77,32 +85,30 @@ function loadRequests() {
   }
 }
 
-function saveSettings(next) {
-  localStorage.setItem(SETTINGS_KEY, JSON.stringify(next));
+function loadCrewCodes() {
+  const raw = localStorage.getItem(CREW_CODES_KEY);
+  if (!raw) return [];
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return [];
+  }
 }
 
-function saveRequests(next) {
-  localStorage.setItem(REQUESTS_KEY, JSON.stringify(next));
-}
+function saveSettings(next) { localStorage.setItem(SETTINGS_KEY, JSON.stringify(next)); }
+function saveRequests(next) { localStorage.setItem(REQUESTS_KEY, JSON.stringify(next)); }
+function saveCrewCodes(next) { localStorage.setItem(CREW_CODES_KEY, JSON.stringify(next)); }
 
 function applySettings(current) {
   document.documentElement.style.setProperty('--hero-image', `url('${current.heroImage}')`);
   document.documentElement.style.setProperty('--accent', current.accentColor || DEFAULT_SETTINGS.accentColor);
   document.documentElement.style.setProperty('--title-color', current.titleColor || DEFAULT_SETTINGS.titleColor);
-
   document.querySelectorAll('[data-field]').forEach((node) => {
     const key = node.dataset.field;
-    if (Object.hasOwn(current, key)) {
-      node.textContent = current[key];
-    }
+    if (Object.hasOwn(current, key)) node.textContent = current[key];
   });
-
-  document.querySelectorAll('.brand strong').forEach((node) => {
-    node.textContent = current.siteName;
-  });
-  document.querySelectorAll('.brand-mark').forEach((node) => {
-    node.textContent = current.logoLetter || 'N';
-  });
+  document.querySelectorAll('.brand strong').forEach((node) => { node.textContent = current.siteName; });
+  document.querySelectorAll('.brand-mark').forEach((node) => { node.textContent = current.logoLetter || 'N'; });
 }
 
 function setActiveNav() {
@@ -113,54 +119,71 @@ function setActiveNav() {
 function renderFleet() {
   const container = document.getElementById('fleetGrid');
   if (!container) return;
-
-  container.innerHTML = settings.fleetItems
-    .map(
-      (item) => `
-        <article class="card glass fleet-card reveal visible">
-          <img src="${item.image}" alt="${item.name}" />
-          <span>${item.role}</span>
-          <h3>${item.name}</h3>
-        </article>`
-    )
-    .join('');
+  container.innerHTML = settings.fleetItems.map((item) => `
+    <article class="card glass fleet-card reveal visible">
+      <img src="${item.image}" alt="${item.name}" />
+      <span>${item.role}</span>
+      <h3>${item.name}</h3>
+    </article>`).join('');
 }
 
 function renderRequests() {
   const list = document.getElementById('requestList');
   if (!list) return;
-
   if (!requests.length) {
     list.innerHTML = '<div class="empty-state">No training requests have been submitted yet.</div>';
     return;
   }
+  list.innerHTML = [...requests].reverse().map((request) => `
+    <article class="request-card">
+      <div class="request-card-top">
+        <h3>${request.name}</h3>
+        <span class="request-position">${request.position}</span>
+      </div>
+      <div class="request-meta">
+        <span>${request.contact}</span>
+        <span>${request.availability}</span>
+        <span>${request.submittedAt}</span>
+      </div>
+      <p><strong>Experience:</strong> ${request.experience || 'Not provided'}</p>
+      <p><strong>Goals:</strong> ${request.goals}</p>
+    </article>`).join('');
+}
 
-  list.innerHTML = [...requests]
-    .reverse()
-    .map(
-      (request) => `
-        <article class="request-card">
-          <div class="request-card-top">
-            <h3>${request.name}</h3>
-            <span class="request-position">${request.position}</span>
-          </div>
-          <div class="request-meta">
-            <span>${request.contact}</span>
-            <span>${request.availability}</span>
-            <span>${request.submittedAt}</span>
-          </div>
-          <p><strong>Experience:</strong> ${request.experience || 'Not provided'}</p>
-          <p><strong>Goals:</strong> ${request.goals}</p>
-        </article>`
-    )
-    .join('');
+function renderCrewCodes() {
+  const list = document.getElementById('crewCodeList');
+  if (!list) return;
+  if (!crewCodes.length) {
+    list.innerHTML = '<div class="empty-state">No crew access codes generated yet.</div>';
+    return;
+  }
+  list.innerHTML = [...crewCodes].reverse().map((entry) => `
+    <article class="request-card">
+      <div class="request-card-top">
+        <h3>${entry.label}</h3>
+        <span class="request-position">${entry.code}</span>
+      </div>
+      <div class="request-meta">
+        <span>Prefix: ${entry.prefix}</span>
+        <span>Created: ${entry.createdAt}</span>
+      </div>
+    </article>`).join('');
 }
 
 function updateRequestCounters() {
   const total = requests.length;
-  document.getElementById('requestCountBadge')?.replaceChildren(document.createTextNode(String(total)));
-  document.getElementById('requestCountHeader')?.replaceChildren(document.createTextNode(String(total)));
-  document.getElementById('requestCountInline')?.replaceChildren(document.createTextNode(String(total)));
+  ['requestCountBadge', 'requestCountHeader', 'requestCountInline'].forEach((id) => {
+    const node = document.getElementById(id);
+    if (node) node.textContent = String(total);
+  });
+}
+
+function updateCrewCodeCounters() {
+  const total = crewCodes.length;
+  ['crewCodeCount', 'crewCodeCountAdmin'].forEach((id) => {
+    const node = document.getElementById(id);
+    if (node) node.textContent = String(total);
+  });
 }
 
 function setupRevealAnimations() {
@@ -169,16 +192,9 @@ function setupRevealAnimations() {
     animated.forEach((item) => item.classList.add('visible'));
     return;
   }
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) entry.target.classList.add('visible');
-      });
-    },
-    { threshold: 0.15 }
-  );
-
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+  }, { threshold: 0.15 });
   animated.forEach((item) => observer.observe(item));
 }
 
@@ -186,14 +202,12 @@ function setupTrainingForm() {
   const form = document.getElementById('trainingRequestForm');
   const status = document.getElementById('trainingFormStatus');
   if (!form || !status) return;
-
   updateRequestCounters();
-
   form.addEventListener('submit', (event) => {
     event.preventDefault();
     const formData = new FormData(form);
     const submission = {
-      id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
+      id: globalThis.crypto?.randomUUID ? globalThis.crypto.randomUUID() : String(Date.now()),
       name: String(formData.get('name') || '').trim(),
       contact: String(formData.get('contact') || '').trim(),
       position: String(formData.get('position') || '').trim(),
@@ -202,7 +216,6 @@ function setupTrainingForm() {
       goals: String(formData.get('goals') || '').trim(),
       submittedAt: new Date().toLocaleString()
     };
-
     requests = [...loadRequests(), submission];
     saveRequests(requests);
     renderRequests();
@@ -213,55 +226,55 @@ function setupTrainingForm() {
 }
 
 function setupAdmin() {
-  const panel = document.getElementById('adminPanel');
-  const inbox = document.getElementById('requestInbox');
-  const unlockButton = document.getElementById('adminUnlock');
-  const status = document.getElementById('adminStatus');
-  if (!panel || !unlockButton || !status || !inbox) return;
+  const gate = document.getElementById('adminGate');
+  const workspace = document.getElementById('adminWorkspace');
+  const loginForm = document.getElementById('adminLoginForm');
+  const gateStatus = document.getElementById('adminGateStatus');
+  if (!gate || !workspace || !loginForm || !gateStatus) return;
 
   populateAdminForm();
   renderRequests();
+  renderCrewCodes();
   updateRequestCounters();
+  updateCrewCodeCounters();
 
-  unlockButton.addEventListener('click', () => {
-    const password = window.prompt('Enter admin password');
+  if (sessionStorage.getItem(ADMIN_SESSION_KEY) === 'open') unlockAdminView();
+
+  loginForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const password = document.getElementById('adminPasswordInput')?.value || '';
     if (password === 'Popwings') {
-      panel.classList.remove('locked');
-      inbox.classList.remove('locked');
-      status.textContent = 'Editor unlocked. Live training requests are now visible below.';
+      sessionStorage.setItem(ADMIN_SESSION_KEY, 'open');
+      unlockAdminView();
+      gateStatus.textContent = 'Portal unlocked.';
     } else {
-      status.textContent = 'Incorrect password. Editor remains locked.';
+      gateStatus.textContent = 'Incorrect password.';
     }
+  });
+
+  document.getElementById('adminLogout')?.addEventListener('click', () => {
+    sessionStorage.removeItem(ADMIN_SESSION_KEY);
+    lockAdminView();
+    gateStatus.textContent = 'Portal locked.';
   });
 
   document.getElementById('saveSettings')?.addEventListener('click', () => {
     const next = { ...settings };
-
     document.querySelectorAll('[data-setting]').forEach((input) => {
       const key = input.dataset.setting;
       if (key === 'fleetItems') {
-        next.fleetItems = input.value
-          .split('\n')
-          .map((line) => line.trim())
-          .filter(Boolean)
-          .map((line) => {
-            const [name, role, image] = line.split('|');
-            return {
-              name: name?.trim() || 'Aircraft',
-              role: role?.trim() || 'Role',
-              image: image?.trim() || DEFAULT_SETTINGS.fleetItems[0].image
-            };
-          });
+        next.fleetItems = input.value.split('\n').map((line) => line.trim()).filter(Boolean).map((line) => {
+          const [name, role, image] = line.split('|');
+          return { name: name?.trim() || 'Aircraft', role: role?.trim() || 'Role', image: image?.trim() || DEFAULT_SETTINGS.fleetItems[0].image };
+        });
       } else {
         next[key] = input.value.trim();
       }
     });
-
     Object.assign(settings, next);
     saveSettings(next);
     applySettings(settings);
     renderFleet();
-    status.textContent = 'Changes saved locally in this browser.';
   });
 
   document.getElementById('resetSettings')?.addEventListener('click', () => {
@@ -270,7 +283,6 @@ function setupAdmin() {
     populateAdminForm();
     applySettings(settings);
     renderFleet();
-    status.textContent = 'Defaults restored.';
   });
 
   document.getElementById('clearRequests')?.addEventListener('click', () => {
@@ -278,16 +290,73 @@ function setupAdmin() {
     saveRequests(requests);
     renderRequests();
     updateRequestCounters();
-    status.textContent = 'Training request inbox cleared.';
+  });
+
+  document.getElementById('crewCodeForm')?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const prefix = String(formData.get('crew_prefix') || 'NTL').trim().toUpperCase();
+    const label = String(formData.get('crew_label') || 'Crew Access').trim();
+    const code = `${prefix}-CREW-${Math.floor(1000 + Math.random() * 9000)}`;
+    crewCodes = [...crewCodes, { code, prefix, label, createdAt: new Date().toLocaleString() }];
+    saveCrewCodes(crewCodes);
+    renderCrewCodes();
+    updateCrewCodeCounters();
+    event.currentTarget.reset();
+  });
+
+  function unlockAdminView() {
+    document.body.classList.remove('locked-admin-page');
+    gate.classList.add('hidden-panel');
+    workspace.classList.remove('hidden-panel');
+  }
+
+  function lockAdminView() {
+    document.body.classList.add('locked-admin-page');
+    gate.classList.remove('hidden-panel');
+    workspace.classList.add('hidden-panel');
+  }
+}
+
+function setupCrewCenter() {
+  const form = document.getElementById('crewLoginForm');
+  const status = document.getElementById('crewLoginStatus');
+  const dashboard = document.getElementById('crewDashboard');
+  const logout = document.getElementById('crewLogout');
+  if (!form || !status || !dashboard) return;
+
+  updateCrewCodeCounters();
+
+  const sessionCode = sessionStorage.getItem(CREW_SESSION_KEY);
+  if (sessionCode && crewCodes.some((entry) => entry.code === sessionCode)) {
+    dashboard.classList.remove('hidden-panel');
+    status.textContent = `Crew access active: ${sessionCode}`;
+  }
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const code = String(new FormData(form).get('access_code') || '').trim().toUpperCase();
+    const match = crewCodes.find((entry) => entry.code.toUpperCase() === code);
+    if (!match) {
+      status.textContent = 'Invalid access code. Generate one in the admin portal first.';
+      return;
+    }
+    sessionStorage.setItem(CREW_SESSION_KEY, match.code);
+    dashboard.classList.remove('hidden-panel');
+    status.textContent = `Crew access active: ${match.code}`;
+  });
+
+  logout?.addEventListener('click', () => {
+    sessionStorage.removeItem(CREW_SESSION_KEY);
+    dashboard.classList.add('hidden-panel');
+    status.textContent = 'No crew session active.';
   });
 }
 
 function populateAdminForm() {
   document.querySelectorAll('[data-setting]').forEach((input) => {
     const key = input.dataset.setting;
-    input.value = key === 'fleetItems'
-      ? settings.fleetItems.map((item) => `${item.name}|${item.role}|${item.image}`).join('\n')
-      : settings[key] || '';
+    input.value = key === 'fleetItems' ? settings.fleetItems.map((item) => `${item.name}|${item.role}|${item.image}`).join('\n') : settings[key] || '';
   });
 }
 
@@ -298,12 +367,16 @@ function setupStorageSync() {
       renderRequests();
       updateRequestCounters();
     }
-
     if (event.key === SETTINGS_KEY) {
       Object.assign(settings, loadSettings());
       applySettings(settings);
       populateAdminForm();
       renderFleet();
+    }
+    if (event.key === CREW_CODES_KEY) {
+      crewCodes = loadCrewCodes();
+      renderCrewCodes();
+      updateCrewCodeCounters();
     }
   });
 }
