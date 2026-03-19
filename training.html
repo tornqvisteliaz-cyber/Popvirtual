@@ -22,10 +22,16 @@
         </nav>
       </header>
       <main class="page-grid reveal">
-        <section class="page-hero glass">
-          <p class="section-tag">ATC Academy</p>
-          <h1>Controller Training Pipeline</h1>
-          <p data-field="academyIntro">Progress through a five-stage academy with mentor pairing, live session debriefs, SOP drills, and event certifications.</p>
+        <section class="page-hero glass training-hero">
+          <div>
+            <p class="section-tag">ATC Academy</p>
+            <h1>Controller Training Pipeline</h1>
+            <p data-field="academyIntro">Progress through a five-stage academy with mentor pairing, live session debriefs, SOP drills, and event certifications.</p>
+          </div>
+          <div class="hero-chip-stack">
+            <div class="hero-chip"><strong>5 Stages</strong><span>From delivery to instructor track</span></div>
+            <div class="hero-chip"><strong>1 Inbox</strong><span>Requests go directly to admin review</span></div>
+          </div>
         </section>
 
         <section class="training-layout">
@@ -41,7 +47,7 @@
             <div class="form-heading">
               <p class="section-tag">Need Training?</p>
               <h2>Send a request to the admin portal</h2>
-              <p>Fill this out and the request will appear in the admin inbox for review.</p>
+              <p>Fill this out and the request will be saved, counted, and shown inside the admin inbox.</p>
             </div>
             <form id="trainingRequestForm" class="request-form">
               <label><span>Name / Callsign</span><input name="name" type="text" required placeholder="NTL204 / Alex" /></label>
@@ -61,7 +67,11 @@
               <label class="full"><span>Goals</span><textarea name="goals" rows="4" required placeholder="What do you want to train on?"></textarea></label>
               <div class="form-actions">
                 <button type="submit" class="button button-primary">Send Training Request</button>
+                <a href="admin.html" class="button button-secondary">Open Admin Inbox</a>
+              </div>
+              <div class="submission-note">
                 <p id="trainingFormStatus" class="form-status">No request submitted yet.</p>
+                <div class="request-count-pill">Current stored requests: <strong id="requestCountInline">0</strong></div>
               </div>
             </form>
           </section>

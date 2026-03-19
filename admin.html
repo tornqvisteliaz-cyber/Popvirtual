@@ -26,11 +26,26 @@
           <div>
             <p class="section-tag">Admin Portal</p>
             <h1>Site Control Center</h1>
-            <p>Use the unlock button and password <strong>Popwings</strong>. You can edit branding, text, colors, homepage cards, imagery, and fleet items, plus review training requests.</p>
+            <p>Use the unlock button and password <strong>Popwings</strong>. You can edit branding, text, colors, homepage cards, imagery, fleet items, and review live training requests.</p>
           </div>
           <div class="admin-hero-actions">
+            <div class="request-count-pill">Inbox requests: <strong id="requestCountBadge">0</strong></div>
             <button id="adminUnlock" class="button button-primary">Unlock Admin Editor</button>
             <p id="adminStatus" class="admin-status">Editor locked.</p>
+          </div>
+        </section>
+
+        <section id="requestInbox" class="glass inbox-panel locked">
+          <div class="admin-section-header">
+            <div>
+              <h2>Training request inbox</h2>
+              <p>Requests submitted from the training page appear here automatically.</p>
+            </div>
+            <div class="request-count-pill">Live queue: <strong id="requestCountHeader">0</strong></div>
+          </div>
+          <div id="requestList" class="request-list"></div>
+          <div class="admin-actions">
+            <button id="clearRequests" class="button button-secondary">Clear Request Inbox</button>
           </div>
         </section>
 
@@ -64,17 +79,6 @@
           <div class="admin-actions">
             <button id="saveSettings" class="button button-primary">Save Changes</button>
             <button id="resetSettings" class="button button-secondary">Reset Defaults</button>
-          </div>
-        </section>
-
-        <section id="requestInbox" class="glass inbox-panel locked">
-          <div class="admin-section-header">
-            <h2>Training request inbox</h2>
-            <p>Requests submitted from the training page appear here.</p>
-          </div>
-          <div id="requestList" class="request-list"></div>
-          <div class="admin-actions">
-            <button id="clearRequests" class="button button-secondary">Clear Request Inbox</button>
           </div>
         </section>
       </main>

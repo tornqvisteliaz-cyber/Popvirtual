@@ -41,7 +41,7 @@ const DEFAULT_SETTINGS = {
 const SETTINGS_KEY = 'northlink-admin-settings';
 const REQUESTS_KEY = 'northlink-training-requests';
 const settings = loadSettings();
-const requests = loadRequests();
+let requests = loadRequests();
 
 applySettings(settings);
 setActiveNav();
@@ -50,14 +50,20 @@ setupRevealAnimations();
 setupTrainingForm();
 setupAdmin();
 renderRequests();
+updateRequestCounters();
+setupStorageSync();
+
+function cloneDefaults() {
+  return JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+}
 
 function loadSettings() {
   const raw = localStorage.getItem(SETTINGS_KEY);
-  if (!raw) return structuredClone(DEFAULT_SETTINGS);
+  if (!raw) return cloneDefaults();
   try {
-    return { ...structuredClone(DEFAULT_SETTINGS), ...JSON.parse(raw) };
+    return { ...cloneDefaults(), ...JSON.parse(raw) };
   } catch {
-    return structuredClone(DEFAULT_SETTINGS);
+    return cloneDefaults();
   }
 }
 
@@ -134,9 +140,11 @@ function renderRequests() {
     .map(
       (request) => `
         <article class="request-card">
-          <h3>${request.name}</h3>
+          <div class="request-card-top">
+            <h3>${request.name}</h3>
+            <span class="request-position">${request.position}</span>
+          </div>
           <div class="request-meta">
-            <span>${request.position}</span>
             <span>${request.contact}</span>
             <span>${request.availability}</span>
             <span>${request.submittedAt}</span>
@@ -146,6 +154,13 @@ function renderRequests() {
         </article>`
     )
     .join('');
+}
+
+function updateRequestCounters() {
+  const total = requests.length;
+  document.getElementById('requestCountBadge')?.replaceChildren(document.createTextNode(String(total)));
+  document.getElementById('requestCountHeader')?.replaceChildren(document.createTextNode(String(total)));
+  document.getElementById('requestCountInline')?.replaceChildren(document.createTextNode(String(total)));
 }
 
 function setupRevealAnimations() {
@@ -172,10 +187,13 @@ function setupTrainingForm() {
   const status = document.getElementById('trainingFormStatus');
   if (!form || !status) return;
 
+  updateRequestCounters();
+
   form.addEventListener('submit', (event) => {
     event.preventDefault();
     const formData = new FormData(form);
     const submission = {
+      id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
       name: String(formData.get('name') || '').trim(),
       contact: String(formData.get('contact') || '').trim(),
       position: String(formData.get('position') || '').trim(),
@@ -185,11 +203,12 @@ function setupTrainingForm() {
       submittedAt: new Date().toLocaleString()
     };
 
-    requests.push(submission);
+    requests = [...loadRequests(), submission];
     saveRequests(requests);
     renderRequests();
+    updateRequestCounters();
     form.reset();
-    status.textContent = 'Training request sent to the admin portal inbox.';
+    status.textContent = 'Training request saved and sent to the admin portal inbox.';
   });
 }
 
@@ -201,13 +220,15 @@ function setupAdmin() {
   if (!panel || !unlockButton || !status || !inbox) return;
 
   populateAdminForm();
+  renderRequests();
+  updateRequestCounters();
 
   unlockButton.addEventListener('click', () => {
     const password = window.prompt('Enter admin password');
     if (password === 'Popwings') {
       panel.classList.remove('locked');
       inbox.classList.remove('locked');
-      status.textContent = 'Editor unlocked. You can now change branding, text, colors, pictures, fleet, and review training requests.';
+      status.textContent = 'Editor unlocked. Live training requests are now visible below.';
     } else {
       status.textContent = 'Incorrect password. Editor remains locked.';
     }
@@ -245,7 +266,7 @@ function setupAdmin() {
 
   document.getElementById('resetSettings')?.addEventListener('click', () => {
     localStorage.removeItem(SETTINGS_KEY);
-    Object.assign(settings, structuredClone(DEFAULT_SETTINGS));
+    Object.assign(settings, cloneDefaults());
     populateAdminForm();
     applySettings(settings);
     renderFleet();
@@ -253,9 +274,10 @@ function setupAdmin() {
   });
 
   document.getElementById('clearRequests')?.addEventListener('click', () => {
-    requests.splice(0, requests.length);
+    requests = [];
     saveRequests(requests);
     renderRequests();
+    updateRequestCounters();
     status.textContent = 'Training request inbox cleared.';
   });
 }
@@ -266,5 +288,22 @@ function populateAdminForm() {
     input.value = key === 'fleetItems'
       ? settings.fleetItems.map((item) => `${item.name}|${item.role}|${item.image}`).join('\n')
       : settings[key] || '';
+  });
+}
+
+function setupStorageSync() {
+  window.addEventListener('storage', (event) => {
+    if (event.key === REQUESTS_KEY) {
+      requests = loadRequests();
+      renderRequests();
+      updateRequestCounters();
+    }
+
+    if (event.key === SETTINGS_KEY) {
+      Object.assign(settings, loadSettings());
+      applySettings(settings);
+      populateAdminForm();
+      renderFleet();
+    }
   });
 }
