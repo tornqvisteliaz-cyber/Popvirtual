@@ -42,11 +42,13 @@ const SETTINGS_KEY = 'northlink-admin-settings';
 const REQUESTS_KEY = 'northlink-training-requests';
 const CREW_CODES_KEY = 'northlink-crew-codes';
 const CREW_SESSION_KEY = 'northlink-crew-session';
+const CREW_PROFILES_KEY = 'northlink-crew-profiles';
 const ADMIN_SESSION_KEY = 'northlink-admin-session';
 
 const settings = loadSettings();
 let requests = loadRequests();
 let crewCodes = loadCrewCodes();
+let crewProfiles = loadCrewProfiles();
 
 applySettings(settings);
 setActiveNav();
@@ -64,40 +66,21 @@ setupStorageSync();
 function cloneDefaults() {
   return JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
 }
-
-function loadSettings() {
-  const raw = localStorage.getItem(SETTINGS_KEY);
-  if (!raw) return cloneDefaults();
-  try {
-    return { ...cloneDefaults(), ...JSON.parse(raw) };
-  } catch {
-    return cloneDefaults();
-  }
+function loadJson(key, fallback) {
+  const raw = localStorage.getItem(key);
+  if (!raw) return fallback;
+  try { return JSON.parse(raw); } catch { return fallback; }
 }
-
-function loadRequests() {
-  const raw = localStorage.getItem(REQUESTS_KEY);
-  if (!raw) return [];
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return [];
-  }
-}
-
-function loadCrewCodes() {
-  const raw = localStorage.getItem(CREW_CODES_KEY);
-  if (!raw) return [];
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return [];
-  }
-}
-
+function loadSettings() { return { ...cloneDefaults(), ...loadJson(SETTINGS_KEY, {}) }; }
+function loadRequests() { return loadJson(REQUESTS_KEY, []); }
+function loadCrewCodes() { return loadJson(CREW_CODES_KEY, []); }
+function loadCrewProfiles() { return loadJson(CREW_PROFILES_KEY, {}); }
 function saveSettings(next) { localStorage.setItem(SETTINGS_KEY, JSON.stringify(next)); }
 function saveRequests(next) { localStorage.setItem(REQUESTS_KEY, JSON.stringify(next)); }
 function saveCrewCodes(next) { localStorage.setItem(CREW_CODES_KEY, JSON.stringify(next)); }
+function saveCrewProfiles(next) { localStorage.setItem(CREW_PROFILES_KEY, JSON.stringify(next)); }
+
+function normalizeDiscord(value) { return String(value || '').trim().toLowerCase(); }
 
 function applySettings(current) {
   document.documentElement.style.setProperty('--hero-image', `url('${current.heroImage}')`);
@@ -141,6 +124,7 @@ function renderRequests() {
         <span class="request-position">${request.position}</span>
       </div>
       <div class="request-meta">
+        <span>Discord: ${request.discord}</span>
         <span>${request.contact}</span>
         <span>${request.availability}</span>
         <span>${request.submittedAt}</span>
@@ -164,6 +148,7 @@ function renderCrewCodes() {
         <span class="request-position">${entry.code}</span>
       </div>
       <div class="request-meta">
+        <span>Discord: ${entry.discord}</span>
         <span>Prefix: ${entry.prefix}</span>
         <span>Created: ${entry.createdAt}</span>
       </div>
@@ -206,9 +191,11 @@ function setupTrainingForm() {
   form.addEventListener('submit', (event) => {
     event.preventDefault();
     const formData = new FormData(form);
+    const discord = String(formData.get('discord') || '').trim();
     const submission = {
       id: globalThis.crypto?.randomUUID ? globalThis.crypto.randomUUID() : String(Date.now()),
       name: String(formData.get('name') || '').trim(),
+      discord,
       contact: String(formData.get('contact') || '').trim(),
       position: String(formData.get('position') || '').trim(),
       availability: String(formData.get('availability') || '').trim(),
@@ -221,7 +208,7 @@ function setupTrainingForm() {
     renderRequests();
     updateRequestCounters();
     form.reset();
-    status.textContent = 'Training request saved and sent to the admin portal inbox.';
+    status.textContent = `Training request saved for Discord user ${discord}.`;
   });
 }
 
@@ -297,8 +284,9 @@ function setupAdmin() {
     const formData = new FormData(event.currentTarget);
     const prefix = String(formData.get('crew_prefix') || 'NTL').trim().toUpperCase();
     const label = String(formData.get('crew_label') || 'Crew Access').trim();
+    const discord = String(formData.get('crew_discord') || '').trim();
     const code = `${prefix}-CREW-${Math.floor(1000 + Math.random() * 9000)}`;
-    crewCodes = [...crewCodes, { code, prefix, label, createdAt: new Date().toLocaleString() }];
+    crewCodes = [...crewCodes, { code, prefix, label, discord, createdAt: new Date().toLocaleString() }];
     saveCrewCodes(crewCodes);
     renderCrewCodes();
     updateCrewCodeCounters();
@@ -310,7 +298,6 @@ function setupAdmin() {
     gate.classList.add('hidden-panel');
     workspace.classList.remove('hidden-panel');
   }
-
   function lockAdminView() {
     document.body.classList.add('locked-admin-page');
     gate.classList.remove('hidden-panel');
@@ -319,38 +306,71 @@ function setupAdmin() {
 }
 
 function setupCrewCenter() {
-  const form = document.getElementById('crewLoginForm');
-  const status = document.getElementById('crewLoginStatus');
+  const loginForm = document.getElementById('crewLoginForm');
+  const loginStatus = document.getElementById('crewLoginStatus');
   const dashboard = document.getElementById('crewDashboard');
+  const profileForm = document.getElementById('crewProfileForm');
+  const profileStatus = document.getElementById('crewProfileStatus');
   const logout = document.getElementById('crewLogout');
-  if (!form || !status || !dashboard) return;
+  const discordDisplay = document.getElementById('crewDiscordDisplay');
+  if (!loginForm || !loginStatus || !dashboard || !profileForm || !profileStatus || !discordDisplay) return;
 
   updateCrewCodeCounters();
 
-  const sessionCode = sessionStorage.getItem(CREW_SESSION_KEY);
-  if (sessionCode && crewCodes.some((entry) => entry.code === sessionCode)) {
-    dashboard.classList.remove('hidden-panel');
-    status.textContent = `Crew access active: ${sessionCode}`;
-  }
+  const activeSession = loadJson(CREW_SESSION_KEY, null);
+  if (activeSession) hydrateCrewSession(activeSession);
 
-  form.addEventListener('submit', (event) => {
+  loginForm.addEventListener('submit', (event) => {
     event.preventDefault();
-    const code = String(new FormData(form).get('access_code') || '').trim().toUpperCase();
-    const match = crewCodes.find((entry) => entry.code.toUpperCase() === code);
+    const formData = new FormData(loginForm);
+    const discord = String(formData.get('discord_username') || '').trim();
+    const code = String(formData.get('access_code') || '').trim().toUpperCase();
+    const match = crewCodes.find((entry) => entry.code.toUpperCase() === code && normalizeDiscord(entry.discord) === normalizeDiscord(discord));
     if (!match) {
-      status.textContent = 'Invalid access code. Generate one in the admin portal first.';
+      loginStatus.textContent = 'Discord verification failed. Use the same Discord username assigned in the admin portal.';
       return;
     }
-    sessionStorage.setItem(CREW_SESSION_KEY, match.code);
-    dashboard.classList.remove('hidden-panel');
-    status.textContent = `Crew access active: ${match.code}`;
+    const session = { code: match.code, discord: match.discord, label: match.label };
+    localStorage.setItem(CREW_SESSION_KEY, JSON.stringify(session));
+    hydrateCrewSession(session);
+    loginStatus.textContent = `Verified with Discord identity ${match.discord}. Crew center unlocked.`;
+  });
+
+  profileForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const session = loadJson(CREW_SESSION_KEY, null);
+    if (!session) {
+      profileStatus.textContent = 'Verify with Discord first.';
+      return;
+    }
+    const formData = new FormData(profileForm);
+    crewProfiles[normalizeDiscord(session.discord)] = {
+      preferredHub: String(formData.get('preferred_hub') || '').trim(),
+      preferredAircraft: String(formData.get('preferred_aircraft') || '').trim(),
+      notes: String(formData.get('notes') || '').trim(),
+      code: session.code,
+      updatedAt: new Date().toLocaleString()
+    };
+    saveCrewProfiles(crewProfiles);
+    profileStatus.textContent = `Crew profile saved for ${session.discord}.`;
   });
 
   logout?.addEventListener('click', () => {
-    sessionStorage.removeItem(CREW_SESSION_KEY);
+    localStorage.removeItem(CREW_SESSION_KEY);
     dashboard.classList.add('hidden-panel');
-    status.textContent = 'No crew session active.';
+    loginStatus.textContent = 'No crew session active.';
+    profileStatus.textContent = 'No profile changes saved yet.';
   });
+
+  function hydrateCrewSession(session) {
+    dashboard.classList.remove('hidden-panel');
+    discordDisplay.textContent = session.discord;
+    const profile = crewProfiles[normalizeDiscord(session.discord)] || {};
+    profileForm.elements.preferred_hub.value = profile.preferredHub || '';
+    profileForm.elements.preferred_aircraft.value = profile.preferredAircraft || '';
+    profileForm.elements.notes.value = profile.notes || '';
+    profileStatus.textContent = profile.updatedAt ? `Profile restored from ${profile.updatedAt}.` : 'No profile changes saved yet.';
+  }
 }
 
 function populateAdminForm() {
@@ -377,6 +397,9 @@ function setupStorageSync() {
       crewCodes = loadCrewCodes();
       renderCrewCodes();
       updateCrewCodeCounters();
+    }
+    if (event.key === CREW_PROFILES_KEY) {
+      crewProfiles = loadCrewProfiles();
     }
   });
 }

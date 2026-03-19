@@ -138,3 +138,6 @@ select option { color: #111; }
   .hero h1 { font-size: 3.4rem; }
   .button { width: 100%; }
 }
+
+.request-form .full, .submission-note.full { grid-column: 1 / -1; }
+.crew-dashboard { display: grid; gap: 20px; }

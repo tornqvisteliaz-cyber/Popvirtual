@@ -19,8 +19,9 @@ Open `admin.html` and use password `Popwings` to unlock editing.
 - homepage highlight copy and training intro
 - hero background image
 - full fleet list using `aircraft|role|image URL`
-- submitted training requests from the training page
-- crew center access codes generated in the admin portal
+- submitted training requests from the training page with Discord usernames
+- crew center access codes generated in the admin portal and linked to Discord usernames
+- locally saved crew-center profiles keyed by the verified Discord identity
 
 ## Run locally
 ```bash

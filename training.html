@@ -29,8 +29,8 @@
             <p data-field="academyIntro">Progress through a five-stage academy with mentor pairing, live session debriefs, SOP drills, and event certifications.</p>
           </div>
           <div class="hero-chip-stack">
-            <div class="hero-chip"><strong>5 Stages</strong><span>From delivery to instructor track</span></div>
-            <div class="hero-chip"><strong>1 Inbox</strong><span>Requests go directly to admin review</span></div>
+            <div class="hero-chip"><strong>Discord linked</strong><span>Requests include your Discord username</span></div>
+            <div class="hero-chip"><strong>Saved profile</strong><span>Same Discord identity can be reused in crew center</span></div>
           </div>
         </section>
 
@@ -47,11 +47,12 @@
             <div class="form-heading">
               <p class="section-tag">Need Training?</p>
               <h2>Send a request to the admin portal</h2>
-              <p>Fill this out and the request will be saved, counted, and shown inside the admin inbox.</p>
+              <p>Your Discord username is required so the same identity can be reused when you log into the crew center.</p>
             </div>
             <form id="trainingRequestForm" class="request-form">
               <label><span>Name / Callsign</span><input name="name" type="text" required placeholder="NTL204 / Alex" /></label>
-              <label><span>Email or Discord</span><input name="contact" type="text" required placeholder="alex#2040" /></label>
+              <label><span>Discord username</span><input name="discord" type="text" required placeholder="alexpilot#2040" /></label>
+              <label><span>Backup contact</span><input name="contact" type="text" required placeholder="email@example.com" /></label>
               <label><span>Requested position</span>
                 <select name="position" required>
                   <option value="">Choose a position</option>
@@ -62,14 +63,14 @@
                   <option>Instructor Track</option>
                 </select>
               </label>
-              <label><span>Availability</span><input name="availability" type="text" required placeholder="Weekends 18:00Z-22:00Z" /></label>
+              <label class="full"><span>Availability</span><input name="availability" type="text" required placeholder="Weekends 18:00Z-22:00Z" /></label>
               <label class="full"><span>Experience</span><textarea name="experience" rows="3" placeholder="Tell us about your experience level"></textarea></label>
               <label class="full"><span>Goals</span><textarea name="goals" rows="4" required placeholder="What do you want to train on?"></textarea></label>
-              <div class="form-actions">
+              <div class="form-actions full">
                 <button type="submit" class="button button-primary">Send Training Request</button>
                 <a href="admin.html" class="button button-secondary">Open Admin Inbox</a>
               </div>
-              <div class="submission-note">
+              <div class="submission-note full">
                 <p id="trainingFormStatus" class="form-status">No request submitted yet.</p>
                 <div class="request-count-pill">Current stored requests: <strong id="requestCountInline">0</strong></div>
               </div>

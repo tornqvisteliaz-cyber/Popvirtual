@@ -39,7 +39,7 @@
             <div>
               <p class="section-tag">Admin Portal</p>
               <h1>Site Control Center</h1>
-              <p>Edit site content, generate crew login codes, and review incoming training requests.</p>
+              <p>Edit site content, review Discord-linked training requests, and generate crew logins bound to Discord usernames.</p>
             </div>
             <div class="hero-chip-stack">
               <div class="request-count-pill">Requests <strong id="requestCountBadge">0</strong></div>
@@ -53,7 +53,7 @@
               <div class="admin-section-header">
                 <div>
                   <h2>Training request inbox</h2>
-                  <p>Requests submitted from the training page appear here automatically.</p>
+                  <p>Requests now include Discord usernames so staff can approve the same identity for crew-center access.</p>
                 </div>
                 <div class="request-count-pill">Live queue <strong id="requestCountHeader">0</strong></div>
               </div>
@@ -66,11 +66,12 @@
             <section class="glass admin-panel">
               <div class="admin-section-header">
                 <h2>Crew center login generator</h2>
-                <p>Create reusable crew access codes until real APIs are added.</p>
+                <p>Generate a code linked to a Discord username. That same Discord identity can then save profile data in the crew center.</p>
               </div>
               <form id="crewCodeForm" class="admin-grid compact-grid">
                 <label><span>Label / role</span><input name="crew_label" type="text" placeholder="Dispatcher / Instructor" required /></label>
                 <label><span>Code prefix</span><input name="crew_prefix" type="text" maxlength="8" placeholder="NTL" required /></label>
+                <label class="full"><span>Discord username</span><input name="crew_discord" type="text" placeholder="alexpilot#2040" required /></label>
                 <div class="admin-actions full"><button type="submit" class="button button-primary">Generate Crew Login</button></div>
               </form>
               <div id="crewCodeList" class="request-list code-list"></div>
