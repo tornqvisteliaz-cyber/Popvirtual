@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Northlink Fleet</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-page="fleet">
+    <div class="site-shell inner-page">
+      <header class="topbar">
+        <a class="brand" href="index.html"><span class="brand-mark">N</span><span><strong>Northlink</strong><small>ATC Training & Virtual Airline</small></span></a>
+        <nav class="nav">
+          <a href="index.html" data-nav="home">Home</a>
+          <a href="training.html" data-nav="training">Training</a>
+          <a href="fleet.html" data-nav="fleet">Fleet</a>
+          <a href="crew.html" data-nav="crew">Crew Center</a>
+          <a href="admin.html" class="portal-link" data-nav="admin">Admin Portal</a>
+        </nav>
+      </header>
+      <main class="page-grid reveal">
+        <section class="page-hero glass">
+          <p class="section-tag">Fleet</p>
+          <h1 data-field="fleetHeading">Northlink Operational Fleet</h1>
+          <p data-field="fleetIntro">Flexible fleet planning for regional training hops, cargo lines, and long-haul flagship operations.</p>
+        </section>
+        <section id="fleetGrid" class="fleet-grid"></section>
+      </main>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>
