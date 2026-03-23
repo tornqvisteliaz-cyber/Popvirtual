@@ -12,10 +12,10 @@
   <body data-page="admin" class="admin-page locked-admin-page">
     <div class="site-shell inner-page">
       <header class="topbar">
-        <a class="brand" href="index.html"><span class="brand-mark">N</span><span><strong>Northlink</strong><small data-field="siteTagline">ATC Training & Virtual Airline</small></span></a>
+        <a class="brand" href="index.html"><span class="brand-mark">N</span><span><strong>Northlink</strong><small data-field="siteTagline">Virtual Airline</small></span></a>
         <nav class="nav">
           <a href="index.html" data-nav="home">Home</a>
-          <a href="training.html" data-nav="training">Training</a>
+          <a href="training.html" data-nav="training">Join VA</a>
           <a href="fleet.html" data-nav="fleet">Fleet</a>
           <a href="crew.html" data-nav="crew">Crew Center</a>
           <a href="admin.html" class="portal-link" data-nav="admin">Admin Portal</a>
@@ -39,7 +39,7 @@
             <div>
               <p class="section-tag">Admin Portal</p>
               <h1>Site Control Center</h1>
-              <p>Edit site content, review Discord-linked training requests, and generate crew logins bound to Discord usernames.</p>
+              <p>Edit site content, review Discord-linked pilot applications, and generate crew logins bound to Discord usernames.</p>
             </div>
             <div class="hero-chip-stack">
               <div class="request-count-pill">Requests <strong id="requestCountBadge">0</strong></div>
@@ -52,21 +52,21 @@
             <section class="glass inbox-panel">
               <div class="admin-section-header">
                 <div>
-                  <h2>Training request inbox</h2>
-                  <p>Requests now include Discord usernames so staff can approve the same identity for crew-center access.</p>
+                  <h2>Pilot application inbox</h2>
+                  <p>Applications include Discord usernames so staff can approve the same identity for crew-center access.</p>
                 </div>
                 <div class="request-count-pill">Live queue <strong id="requestCountHeader">0</strong></div>
               </div>
               <div id="requestList" class="request-list"></div>
               <div class="admin-actions">
-                <button id="clearRequests" class="button button-secondary">Clear Request Inbox</button>
+                <button id="clearRequests" class="button button-secondary">Clear Applications</button>
               </div>
             </section>
 
             <section class="glass admin-panel">
               <div class="admin-section-header">
                 <h2>Crew center login generator</h2>
-                <p>Generate a code linked to a Discord username. That same Discord identity can then save profile data in the crew center.</p>
+                <p>Generate a crew code linked to a Discord username so approved pilots can access and save their crew-center profile.</p>
               </div>
               <form id="crewCodeForm" class="admin-grid compact-grid">
                 <label><span>Label / role</span><input name="crew_label" type="text" placeholder="Dispatcher / Instructor" required /></label>

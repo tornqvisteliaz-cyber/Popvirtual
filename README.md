@@ -1,13 +1,13 @@
 # Popvirtual / Northlink
 
-Static multi-page website for **Northlink**, an ATC training and virtual airline concept.
+Static multi-page website for **Northlink**, an virtual airline concept.
 
 ## Pages
 - `index.html` - cinematic landing page
-- `training.html` - ATC academy overview plus training request form
+- `training.html` - VA join/application page
 - `fleet.html` - editable fleet showcase
 - `crew.html` - crew center login and dashboard
-- `admin.html` - locked admin portal, training inbox, and crew login generator
+- `admin.html` - locked admin portal, pilot application inbox, and crew login generator
 
 ## Admin access
 Open `admin.html` and use password `Popwings` to unlock editing.
@@ -16,10 +16,10 @@ Open `admin.html` and use password `Popwings` to unlock editing.
 - site name, logo letters, and tagline
 - accent color and hero title color
 - hero text, CTA labels, and briefing card text
-- homepage highlight copy and training intro
+- homepage highlight copy and join-page intro
 - hero background image
 - full fleet list using `aircraft|role|image URL`
-- submitted training requests from the training page with Discord usernames
+- submitted pilot applications from the join page with Discord usernames
 - crew center access codes generated in the admin portal and linked to Discord usernames
 - locally saved crew-center profiles keyed by the verified Discord identity
 

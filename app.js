@@ -1,40 +1,38 @@
 const DEFAULT_SETTINGS = {
   siteName: 'Northlink',
-  siteTagline: 'ATC Training & Virtual Airline',
+  siteTagline: 'Virtual Airline',
   logoLetter: 'N',
   accentColor: '#73c7ff',
   titleColor: '#ffffff',
   heroEyebrow: 'Atlantic precision. Northern discipline.',
   heroTitle: 'NORTHLINK',
-  heroSubtitle: 'ATC TRAINING + VIRTUAL AIRLINE OPERATIONS',
-  heroCopy: 'Build real procedures, fly organized schedules, and train with a virtual team that treats every session like the real thing.',
+  heroSubtitle: 'VIRTUAL AIRLINE OPERATIONS',
+  heroCopy: 'Fly a polished Airbus operation with scheduled routes, clean branding, and a premium virtual airline experience.',
   primaryCtaLabel: 'Join Crew Center',
-  secondaryCtaLabel: 'Request Training',
-  briefTitle: 'North Atlantic Training Block',
-  briefText: 'Mentor-guided tower and approach rotations with post-session review packs and progression tracking.',
+  secondaryCtaLabel: 'Apply Now',
+  briefTitle: 'Northlink Mainline Operation',
+  briefText: 'Daily Airbus line operations, fleet consistency, and premium route planning for a clean modern VA.',
   heroImage: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1600&q=80',
-  trainingTitle: 'Train from delivery to center',
-  trainingText: 'Northlink mentors new and advanced controllers with live briefing nights, SOP packs, and guided session reviews.',
-  vaTitle: 'Fly a modern northern network',
+  trainingTitle: 'A premium Airbus-only virtual airline',
+  trainingText: 'Northlink focuses on polished airline operations, consistent fleet standards, and a strong branded pilot experience.',
+  vaTitle: 'Fly a refined European and North Atlantic network',
   vaText: 'From shuttle hops to transatlantic runs, our crew center keeps your routes, bids, and progression all in one place.',
   communityTitle: 'Built for squads, events, and growth',
-  communityText: 'Host group flights, training nights, and flagship events with a style inspired by premium military and airline presentation sites.',
-  whyTitle: 'A polished operations hub for serious sim pilots and controllers',
-  whyText: 'Every page is built to feel cinematic and mission-ready, while still giving your team a clear way to manage information, fleets, imagery, and branding from the admin portal.',
-  academyIntro: 'Progress through a five-stage academy with mentor pairing, live session debriefs, SOP drills, and event certifications.',
+  communityText: 'Fly regular events, scheduled rotations, and group operations with a modern airline-style presentation.',
+  whyTitle: 'A polished airline hub for serious sim pilots',
+  whyText: 'Every page is built to feel premium and airline-focused, while still giving staff full control over branding, fleet cards, and crew access from the admin portal.',
+  academyIntro: 'Apply to join a premium Airbus-only virtual airline built around clean scheduling, modern branding, and consistent line operations.',
   statOneNumber: '24/7',
   statOneLabel: 'Operations board and dispatch planning',
-  statTwoNumber: '5 Stages',
-  statTwoLabel: 'Structured ATC training pipeline',
-  statThreeNumber: '18 Aircraft',
-  statThreeLabel: 'VA fleet with regional and long-haul routes',
-  fleetHeading: 'Northlink Operational Fleet',
-  fleetIntro: 'Flexible fleet planning for regional training hops, cargo lines, and long-haul flagship operations.',
+  statTwoNumber: '2 Types',
+  statTwoLabel: 'Airbus-only short and medium-haul fleet',
+  statThreeNumber: 'A320 / A321',
+  statThreeLabel: 'Single-family Airbus operation',
+  fleetHeading: 'Northlink Airbus Fleet',
+  fleetIntro: 'A clean Airbus-only fleet built around the A320 and A321 for consistent virtual airline operations.',
   fleetItems: [
-    { name: 'Airbus A320neo', role: 'Regional passenger flagship', image: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=900&q=80' },
-    { name: 'Boeing 737-800', role: 'High-frequency event and schedule ops', image: 'https://images.unsplash.com/photo-1544017353-76d62e66c4b1?auto=format&fit=crop&w=900&q=80' },
-    { name: 'ATR 72-600', role: 'Short-field training and feeder routes', image: 'https://images.unsplash.com/photo-1559628233-100c798642d4?auto=format&fit=crop&w=900&q=80' },
-    { name: 'Boeing 787-9', role: 'Long-haul and flagship crossings', image: 'https://images.unsplash.com/photo-1517479149777-5f3b1511d5ad?auto=format&fit=crop&w=900&q=80' }
+    { name: 'Airbus A320neo', role: 'Core short-haul passenger flagship', image: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=900&q=80' },
+    { name: 'Airbus A321neo', role: 'Higher-capacity mainline route aircraft', image: 'https://images.unsplash.com/photo-1544017353-76d62e66c4b1?auto=format&fit=crop&w=900&q=80' }
   ]
 };
 
@@ -114,7 +112,7 @@ function renderRequests() {
   const list = document.getElementById('requestList');
   if (!list) return;
   if (!requests.length) {
-    list.innerHTML = '<div class="empty-state">No training requests have been submitted yet.</div>';
+    list.innerHTML = '<div class="empty-state">No pilot applications have been submitted yet.</div>';
     return;
   }
   list.innerHTML = [...requests].reverse().map((request) => `
@@ -208,7 +206,7 @@ function setupTrainingForm() {
     renderRequests();
     updateRequestCounters();
     form.reset();
-    status.textContent = `Training request saved for Discord user ${discord}.`;
+    status.textContent = `Pilot application saved for Discord user ${discord}.`;
   });
 }
 
