@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Northlink Crew Center</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-page="crew">
+    <div class="site-shell inner-page">
+      <header class="topbar">
+        <a class="brand" href="index.html"><span class="brand-mark">N</span><span><strong>Northlink</strong><small data-field="siteTagline">Virtual Airline</small></span></a>
+        <nav class="nav">
+          <a href="index.html" data-nav="home">Home</a>
+          <a href="training.html" data-nav="training">Join VA</a>
+          <a href="fleet.html" data-nav="fleet">Fleet</a>
+          <a href="crew.html" data-nav="crew">Crew Center</a>
+          <a href="admin.html" class="portal-link" data-nav="admin">Admin Portal</a>
+        </nav>
+      </header>
+      <main class="page-grid reveal">
+        <section class="page-hero glass clean-hero">
+          <div>
+            <p class="section-tag">Crew Center</p>
+            <h1>Airline Crew Center</h1>
+            <p>Log in with your generated crew code and your Discord username to restore your saved crew-center profile.</p>
+          </div>
+          <div class="hero-chip-stack">
+            <div class="hero-chip"><strong id="crewCodeCount">0</strong><span>Active access codes</span></div>
+          </div>
+        </section>
+
+        <section class="crew-auth-shell">
+          <section class="glass crew-login-panel">
+            <div class="admin-section-header">
+              <h2>Crew login</h2>
+              <p>Discord username + access code are used as the local verification key until real Discord APIs are connected.</p>
+            </div>
+            <form id="crewLoginForm" class="request-form single-column-form">
+              <label><span>Discord username</span><input name="discord_username" type="text" required placeholder="alexpilot#2040" /></label>
+              <label><span>Access code</span><input id="crewAccessCode" name="access_code" type="text" required placeholder="NTL-CREW-4821" /></label>
+              <div class="form-actions">
+                <button type="submit" class="button button-primary">Verify & Unlock</button>
+              </div>
+              <p id="crewLoginStatus" class="form-status">No crew session active.</p>
+            </form>
+          </section>
+
+          <section id="crewDashboard" class="crew-dashboard hidden-panel">
+            <section class="crew-layout">
+              <article class="card glass metric-card"><span>Discord identity</span><strong id="crewDiscordDisplay">Not verified</strong><small>Saved with your crew profile</small></article>
+              <article class="card glass metric-card"><span>Next Rotation</span><strong>ENBR → EGPH</strong><small>B738 / Gate 4 / 18:30Z</small></article>
+              <article class="card glass metric-card"><span>Current Status</span><strong>Line Pilot</strong><small>Ready for scheduled operations</small></article>
+              <article class="card glass metric-card"><span>Hours Logged</span><strong>147.2</strong><small>12.4 this month</small></article>
+            </section>
+
+            <section class="crew-auth-shell">
+              <section class="glass crew-login-panel">
+                <div class="admin-section-header">
+                  <h2>Saved crew profile</h2>
+                  <p>Your notes and preference are stored locally under your verified Discord username.</p>
+                </div>
+                <form id="crewProfileForm" class="single-column-form">
+                  <label><span>Preferred hub</span><input name="preferred_hub" type="text" placeholder="ENGM" /></label>
+                  <label><span>Preferred aircraft</span><input name="preferred_aircraft" type="text" placeholder="B738" /></label>
+                  <label><span>Crew notes</span><textarea name="notes" rows="4" placeholder="Saved personal notes"></textarea></label>
+                  <div class="form-actions">
+                    <button type="submit" class="button button-primary">Save Crew Profile</button>
+                    <button id="crewLogout" class="button button-secondary" type="button">Log Out</button>
+                  </div>
+                  <p id="crewProfileStatus" class="form-status">No profile changes saved yet.</p>
+                </form>
+              </section>
+
+              <section class="crew-table glass">
+                <div class="table-header"><h3>Upcoming schedule</h3><span class="request-count-pill">Verified session</span></div>
+                <div class="table-row"><span>Monday</span><strong>Group Flight: Reykjavik Shuttle</strong><small>20:00Z · 14 crew registered</small></div>
+                <div class="table-row"><span>Wednesday</span><strong>Northlink Evening Rotation</strong><small>19:30Z · Instructor NTL204</small></div>
+                <div class="table-row"><span>Saturday</span><strong>Flagship Event: North Atlantic Surge</strong><small>21:00Z · Full staffing requested</small></div>
+              </section>
+            </section>
+          </section>
+        </section>
+      </main>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>
